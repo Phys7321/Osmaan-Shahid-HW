@@ -34,7 +34,7 @@ y2 = 0.5
 N = 100
 
 def HorizontalLinePotential():
-    V = [[0]*N for i in range(N)]              # Potential is 2D array with 10 columns, 10 rows
+    V = [[0]*N for i in range(N)]              # Potential is 2D array with N columns, N rows
     x = np.linspace(x1,x2,N)                   # Describes x-coordinate in space
     y = np.linspace(y1,y2,N)                   # Describes y-coordinate in space
     for j in range((N-1),-1,-1):               # Decreases in value 
@@ -43,7 +43,7 @@ def HorizontalLinePotential():
             V[i][j] = sci.romberg(integrand,xa,xb,divmax=20)
     cs = plt.pcolormesh(np.transpose(V))
     #cs = plt.pcolor(np.transpose(V))
-    cb = plt.colorbar(cs, orientation = 'horizontal')
+    plt.colorbar(cs, orientation = 'horizontal')
     plt.show()
     return V
 

@@ -30,20 +30,20 @@ Ly = lambda y: y
 
 # Physical dimenstions of the rods
 # Horizontal rod
-xa = 0                # Left end of rod
-xb = 1                # Right end of rod
-y0 = 0                # Displacement of rod from x-axis
+xa = 0                 # Left end of rod
+xb = 1                 # Right end of rod
+y0 = 0                 # Displacement of rod from x-axis
 
 # Vertical rod
-ya = 1                # Lower end of rod
-yb = 2                # Higher end of rod
-x0 = 0                # Displacement of rod from y-axis
+ya = 1                 # Lower end of rod
+yb = 2                 # Higher end of rod
+x0 = 0                 # Displacement of rod from y-axis
 
 # Form the r vector, or the sampling space
-x1 = -1
-x2 = 1.5
-y1 = -0.5
-y2 = 2.5
+x1 = -1.25
+x2 = 1.25
+y1 = -0.25
+y2 = 2.25
 
 # Number of data points
 N = 100
@@ -58,7 +58,7 @@ def HorizontalLinePotential():
             V[i][j] = sci.romberg(integrand,xa,xb,divmax=20)
     cs = plt.pcolormesh(np.transpose(V))
     #cs = plt.pcolor(np.transpose(V))
-    cb = plt.colorbar(cs, orientation = 'horizontal')
+    plt.colorbar(cs, orientation = 'horizontal')
     plt.show()
     return V
 
@@ -72,7 +72,7 @@ def VerticalLinePotential():
             V[i][j] = sci.romberg(integrand,ya,yb,divmax=20)
     cs = plt.pcolormesh(np.transpose(V))
     #cs = plt.pcolor(np.transpose(V))
-    cb = plt.colorbar(cs, orientation = 'vertical')
+    plt.colorbar(cs, orientation = 'vertical')
     plt.show()
     return V
 
@@ -85,7 +85,7 @@ def TotalLinePotential():
     for j in range((N-1),-1,-1):               # Decreases in value 
         for i in range(0,N):                   # Increases in value
             x_integrand = lambda z: z**2/math.sqrt((x[i] - z)**2 + (y[j] - y0)**2)
-            y_integrand = lambda z: z**2/math.sqrt((x[i] - x0)**2 + (y[j] - z)**2)
+            y_integrand = lambda z: z/math.sqrt((x[i] - x0)**2 + (y[j] - z)**2)
             Vx[i][j] = sci.romberg(x_integrand,xa,xb,divmax=20)
             Vy[i][j] = sci.romberg(y_integrand,ya,yb,divmax=20)
     Vx = np.array(Vx)
@@ -93,7 +93,7 @@ def TotalLinePotential():
     V = Vx + Vy
     V = V.tolist()
     cs = plt.pcolor(np.transpose(V))
-    cb = plt.colorbar(cs, orientation = 'horizontal')
+    plt.colorbar(cs, orientation = 'horizontal')
     plt.show()
     return V
 
