@@ -55,10 +55,13 @@ def HorizontalLinePotential():
 
 # Now find the electric field, E = - (dV/dx, dV/dy, dV/dz)
 V = HorizontalLinePotential()
-x = np.linspace(x1,x2,N)                   # Describes x-coordinate in space
-y = np.linspace(y1,y2,N)                   # Describes y-coordinate in space
-Ex = - np.diff(V)/np.diff(x)
-Ey = - np.diff(V)/np.diff(y)
-plt.quiver(Ex,Ey)
-plt.show
+#x = np.linspace(x1,x2,N)                   # Describes x-coordinate in space
+#y = np.linspace(y1,y2,N)                   # Describes y-coordinate in space
+#Ex = - np.diff(V)/np.diff(x)
+#Ey = - np.diff(V)/np.diff(y)
+#plt.quiver(Ex,Ey)
+#plt.show
 
+E = np.gradient(np.transpose(V))
+plt.quiver(-1*E[0],-1*E[1])
+plt.show()

@@ -46,7 +46,7 @@ y1 = -0.25
 y2 = 2.25
 
 # Number of data points
-N = 100
+N = 250
 
 def HorizontalLinePotential():
     V = [[0]*N for i in range(N)]              # Potential is 2D array with N columns, N rows
@@ -102,11 +102,14 @@ def TotalLinePotential():
 
 
 # Now find the electric field, E = - (dV/dx, dV/dy, dV/dz)
-V = HorizontalLinePotential()
-x = np.linspace(x1,x2,N)                   # Describes x-coordinate in space
-y = np.linspace(y1,y2,N)                   # Describes y-coordinate in space
-Ex = - np.diff(V)/np.diff(x)
-Ey = - np.diff(V)/np.diff(y)
-plt.quiver(Ex,Ey)
-plt.show
+V = TotalLinePotential()
+#x = np.linspace(x1,x2,N)                   # Describes x-coordinate in space
+#y = np.linspace(y1,y2,N)                   # Describes y-coordinate in space
+#Ex = - np.diff(V)/np.diff(x)
+#Ey = - np.diff(V)/np.diff(y)
+#plt.quiver(Ex,Ey)
+#plt.show
 
+E = np.gradient(np.transpose(V))
+plt.quiver(E[0],E[1])
+plt.show()
