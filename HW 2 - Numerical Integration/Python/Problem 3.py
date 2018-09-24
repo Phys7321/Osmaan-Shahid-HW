@@ -38,7 +38,7 @@ def CylindricalPotential():
     for j in range((N-1),-1,-1):               # Decreases in value 
         for i in range(0,N):                   # Increases in value
             integrand = lambda z,w: (w**2)*math.cos(z)/math.sqrt((r[j] - w)**2)
-            slop = sci.dblquad(integrand,0,2,0,2*math.pi)
+            slop = sci.dblquad(integrand,r0,R,0,2*math.pi)
             V[i][j] = slop[0]
     r_grid, t_grid = np.meshgrid(r,t)
     #x, y = r_grid*np.cos(t_grid), r_grid*np.sin(t_grid)
