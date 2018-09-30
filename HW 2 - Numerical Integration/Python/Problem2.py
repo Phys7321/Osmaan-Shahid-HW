@@ -28,6 +28,9 @@ import numpy as np
 Lx = lambda x: x**2
 Ly = lambda y: y
 
+# Number of data points
+N = 100
+
 # Physical dimenstions of the rods
 # Horizontal rod
 xa = 0                 # Left end of rod
@@ -45,71 +48,44 @@ x2 = 1.25
 y1 = -0.25
 y2 = 2.25
 
-# Number of data points
-N = 250
+x = np.linspace(x1,x2,N)
+y = np.linspace(y1,y2,N)
 
 def HorizontalLinePotential():
-    V = [[0]*N for i in range(N)]              # Potential is 2D array with N columns, N rows
-    x = np.linspace(x1,x2,N)                   # Describes x-coordinate in space
-    y = np.linspace(y1,y2,N)                   # Describes y-coordinate in space
-    for j in range((N-1),-1,-1):               # Decreases in value 
+    Vx = np.zeros((N,N))              # Potential is 2D array with N columns, N rows
+    for j in range(0,N):               # Decreases in value 
         for i in range(0,N):                   # Increases in value
-            integrand = lambda z: z**2/math.sqrt((x[i] - z)**2 + (y[j] - y0)**2)
-            V[i][j] = sci.romberg(integrand,xa,xb,divmax=20)
-    cs = plt.pcolormesh(np.transpose(V))
-    #cs = plt.pcolor(np.transpose(V))
-    plt.colorbar(cs, orientation = 'horizontal')
-    plt.show()
-    return V
+            integrand = lambda xp: xp**2/math.sqrt((x[i] - xp)**2 + (y[j] - y0)**2)
+            Vx[i][j] = sci.romberg(integrand,xa,xb,divmax=20)
+    return Vx
+
 
 def VerticalLinePotential():
-    V = [[0]*N for i in range(N)]              # Potential is 2D array with N columns, N rows
-    x = np.linspace(x1,x2,N)                   # Describes x-coordinate in space
-    y = np.linspace(y1,y2,N)                   # Describes y-coordinate in space
-    for j in range((N-1),-1,-1):               # Decreases in value 
+    Vy = np.zeros((N,N))              # Potential is 2D array with N columns, N rows
+    for j in range(0,N):               # Decreases in value 
         for i in range(0,N):                   # Increases in value
-            integrand = lambda z: z**2/math.sqrt((x[i] - x0)**2 + (y[j] - z)**2)
-            V[i][j] = sci.romberg(integrand,ya,yb,divmax=20)
-    cs = plt.pcolormesh(np.transpose(V))
-    #cs = plt.pcolor(np.transpose(V))
-    plt.colorbar(cs, orientation = 'vertical')
-    plt.show()
-    return V
-
-def TotalLinePotential():
-    V = [[0]*N for i in range(N)]              # Potential is 2D array with N columns, N rows
-    Vx = [[0]*N for i in range(N)]             # Potential due to horizontal line
-    Vy = [[0]*N for i in range(N)]             # Potential due to vertical line
-    x = np.linspace(x1,x2,N)                   # Describes x-coordinate in space
-    y = np.linspace(y1,y2,N)                   # Describes y-coordinate in space
-    for j in range((N-1),-1,-1):               # Decreases in value 
-        for i in range(0,N):                   # Increases in value
-            x_integrand = lambda z: z**2/math.sqrt((x[i] - z)**2 + (y[j] - y0)**2)
-            y_integrand = lambda z: z/math.sqrt((x[i] - x0)**2 + (y[j] - z)**2)
-            Vx[i][j] = sci.romberg(x_integrand,xa,xb,divmax=20)
-            Vy[i][j] = sci.romberg(y_integrand,ya,yb,divmax=20)
-    Vx = np.array(Vx)
-    Vy = np.array(Vy)
-    V = Vx + Vy
-    V = V.tolist()
-    cs = plt.pcolor(np.transpose(V))
-    plt.colorbar(cs, orientation = 'horizontal')
-    plt.show()
-    return V
+            integrand = lambda yp: yp/math.sqrt((x[i] - x0)**2 + (y[j] - yp)**2)
+            Vy[i][j] = sci.romberg(integrand,ya,yb,divmax=20)
+    return Vy
 
 
 # TotalLinePotential()
+Vx = np.transpose(HorizontalLinePotential())
+Vy = np.transpose(VerticalLinePotential())
+V = Vx + Vy
 
+# Prepare the heatmap for the potential using plt.pcolormesh
+plt.figure(1)
+Vfig = plt.pcolormesh(x,y,V)
+plt.colorbar(Vfig, orientation = 'horizontal')
 
 # Now find the electric field, E = - (dV/dx, dV/dy, dV/dz)
-V = TotalLinePotential()
-#x = np.linspace(x1,x2,N)                   # Describes x-coordinate in space
-#y = np.linspace(y1,y2,N)                   # Describes y-coordinate in space
-#Ex = - np.diff(V)/np.diff(x)
-#Ey = - np.diff(V)/np.diff(y)
-#plt.quiver(Ex,Ey)
-#plt.show
+E = np.negative(np.gradient(V))
+Ex, Ey = E[0], E[1]
 
-E = np.gradient(np.transpose(V))
-plt.quiver(E[0],E[1])
-plt.show()
+# Prepare the 2D electric field using plt.quiver
+plt.figure(2)
+plt.quiver(x,y,Ey,Ex,np.arctan2(Ex,Ey))
+
+# Plot both of them on separate graphs
+plt.show([1,2])
