@@ -58,6 +58,7 @@ colorbar('southoutside')  % Adds horizontal color bar on bottom of contour
 Er = Ey.*cos(t_grid) - Ex.*sin(t_grid) ;
 Et = Ey.*sin(t_grid) + Ex.*cos(t_grid) ;
 figure(2)
-quiver(r_grid.*cos(t_grid),r_grid.*sin(t_grid),Er,Et)
+quiver(r_grid,r_grid,Er,Et)
 
-
+% Plot both of them on separate graphs
+plt.show([1,2])
