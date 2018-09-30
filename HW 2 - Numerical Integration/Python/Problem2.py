@@ -52,9 +52,9 @@ x = np.linspace(x1,x2,N)
 y = np.linspace(y1,y2,N)
 
 def HorizontalLinePotential():
-    Vx = np.zeros((N,N))              # Potential is 2D array with N columns, N rows
-    for j in range(0,N):               # Decreases in value 
-        for i in range(0,N):                   # Increases in value
+    Vx = np.zeros((N,N))               # Potential is 2D array with N columns, N rows
+    for j in range(0,N):               # Sum over y values 
+        for i in range(0,N):           # Sum over x values
             integrand = lambda xp: xp**2/math.sqrt((x[i] - xp)**2 + (y[j] - y0)**2)
             Vx[i][j] = sci.romberg(integrand,xa,xb,divmax=20)
     return Vx
@@ -62,8 +62,8 @@ def HorizontalLinePotential():
 
 def VerticalLinePotential():
     Vy = np.zeros((N,N))              # Potential is 2D array with N columns, N rows
-    for j in range(0,N):               # Decreases in value 
-        for i in range(0,N):                   # Increases in value
+    for j in range(0,N):              # Sum over y values 
+        for i in range(0,N):          # Sum over x values
             integrand = lambda yp: yp/math.sqrt((x[i] - x0)**2 + (y[j] - yp)**2)
             Vy[i][j] = sci.romberg(integrand,ya,yb,divmax=20)
     return Vy
