@@ -51,7 +51,7 @@ Challenge Problem 2.1
 
 
 dt = 1                   # Initialize time step
-deltaT = np.zeros(4)     # Initialize dT vector
+deltaT = np.zeros(4)     # Initialize dt vector
 Temp10 = np.zeros(4)     # Temperature at t = 10
 totaltime = 60
 my_color = ['red', 'green', 'blue', 'orange']
@@ -77,4 +77,10 @@ plt.show()
 
 deltaT    # For the values of delta t,
 Temp10    # these are the temperatures at t = 10
+
+plt.plot(deltaT,Temp10)
+plt.xlabel("Delta T (C)")
+plt.ylabel("Temp (C) at t = 10 min")
+plt.ylim(50,65)
+plt.show()
 
