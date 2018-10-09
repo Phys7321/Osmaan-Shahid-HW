@@ -40,7 +40,7 @@ v0 = 0.            # initial velocity
 vt = 30.           # terminal velocity
 k2 = g*mass/vt**2  # drag coeff.
 
-dt = 0.01           # time step
+dt = 0.1           # time step
 
 
 p = particle(mass, y0, v0)
@@ -89,13 +89,16 @@ plt.show()
 
 p = particle(mass, y0, v0)
 
-y0 = list(np.linspace(1,500,500))
+y0 = list(np.linspace(1,130,130))
 v = [v0]
 t = [0.]
 vnormal = [v0]
 
 for i in range(0,len(y0)):
     p = particle(mass,y0[i],v0)
+    v = [v0]
+    t = [0.]
+    vnormal = [v0]
     y = [y0[i]]
     while p.y > 0:
         fy = -gforce-k2*p.v*abs(p.v)
@@ -106,8 +109,7 @@ for i in range(0,len(y0)):
         vnormal.append(vnormal[-1] - g*dt)
     vimpact = v[-1]
     vnormalimpact = vnormal[-1]
-    diff = np.abs(((vimpact - vnormalimpact)/(vimpact)))*100
-    if diff > 1.0 and diff < 1.9:
-        print(i,diff,vimpact,vnormalimpact,y[i])
+    diff = np.abs(((vimpact - vnormalimpact)/(vnormalimpact)))*100
+    print(i,diff,vimpact,vnormalimpact,y[i],fy)
 
 
