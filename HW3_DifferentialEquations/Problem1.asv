@@ -32,7 +32,7 @@ m = 1; % Mass of pendulum bob
 
 
 
-tspan = [0 N*T];           % Integration time goes from 0 to N*T
+tspan = [0 N*T];           % Integration ime goes from 0 to N*T
 %opts = odeset('events',@events,'refine',6); %Here for future event finder
 opts = odeset('refine',6);
 r0 = [theta0 thetad0];     % [initial_angle initial_angle_velocity]
@@ -80,12 +80,12 @@ ylabel('Energy')
 ylim([-0.5 E0+E0/2])
 
 subplot(2,1,2)
-plot(w(:,1),w(:,2),'k-')
+plot(t,w(:,1),'k-',t,w(:,2),'b--')
+legend('Angle','Angular Velocity')
 title('Phase Space')
 xlabel('\theta')
 ylabel('\theta dot')
-xlim([-5 5])
-ylim([-5 5])
+ylim([-0.5 E0+E0/2])
 end
 %-------------------------------------------
 
