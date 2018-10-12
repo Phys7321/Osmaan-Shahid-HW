@@ -25,24 +25,80 @@ gamma2 = 1.5 ;   % Damping factor
 
 
 % Solve differential equation for different driving force frequencies
-omega = [0 1 2 2.2 2.4 2.6 2.8 3.0 3.2 3.4] ;
+omega = [0 1 2 2.2 2.4 2.6 2.8 3.0 3.2 3.4 4] ;
 
-tspan = [0 N*T0];                               % Integration time goes from 0 to N*T0
+tspan = [0 N*T0];           % Integration time goes from 0 to N*T0
 opts = odeset('refine',6);  % Set up options
+
+% Solve the ODE for omega = 1
+theta0 = 0.0 ;         % Initial angle
+thetad0 = 1.0 ;        % Initial angular velocity
+r0 = [theta0 thetad0]; % Initial conditions
+[t2,w2] = ode45(@proj,tspan,r0,opts,g,L,gamma1,A,omega(2));
+
+% Solve the ODE for omega = 2, first type of initial conditions
+theta0 = 1.0 ;         % Initial angle
+thetad0 = 0.0 ;        % Initial angular velocity
+r0 = [theta0 thetad0]; % Initial conditions
+[t3,w3] = ode45(@proj,tspan,r0,opts,g,L,gamma1,A,omega(3));
+
+% Solve the ODE for omega = 2, second type of initial conditions
+theta0 = 0.0 ;         % Initial angle
+thetad0 = 1.0 ;        % Initial angular velocity
+r0 = [theta0 thetad0]; % Initial conditions
+[t4,w4] = ode45(@proj,tspan,r0,opts,g,L,gamma1,A,omega(3));
+
+% Solve the ODE for omega = 4
+theta0 = 0.0 ;         % Initial angle
+thetad0 = 1.0 ;        % Initial angular velocity
+r0 = [theta0 thetad0]; % Initial conditions
+[t11,w11] = ode45(@proj,tspan,r0,opts,g,L,gamma1,A,omega(11));
+
+%{ 
+Find the periods, but will do this code later to find how
+period changes over time
+ind1 = find(w1(:,2).*circshift(w1(:,2), [-1 0]) <= 0);
+ind1 = chop(ind1,4);
+period1 = 2*mean(diff(t1(ind1)));  % Find the period
+
+ind2 = find(w2(:,2).*circshift(w2(:,2), [-1 0]) <= 0);
+ind2 = chop(ind2,4);
+period2 = 2*mean(diff(t2(ind2)));  % Find the period
+%}
+
+% Create plots
+
+figure(1)
+subplot(1,1,1)
+plot(t3,w3(:,1),'k-',t4,w4(:,1),'c-')  % omega = 2, both initial conditions
+legend('\theta_0 = 1','\theta_0 = 0')
+title('Angle \theta (t) vs. Time')
+xlabel('t')
+ylabel('\theta')
+ylim([-1 1])
+
+
+% From the graph, the steady state solution is a sinusoidal function.
+% This is is true independent of initial conditions, since both graphs
+% converge. The transien
+
+% Now we do these again for different values of omega
+
+
 
 theta0 = 1.0 ;         % Initial angle
 thetad0 = 0.0 ;        % Initial angular velocity
 r0 = [theta0 thetad0]; % Initial conditions
 
 % Solve the ODE
-[t1,w1] = ode45(@proj,tspan,r0,opts,g,L,gamma1,A,omega(1));
+[t1,w1] = ode45(@proj,tspan,r0,opts,g,L,gamma1,A,omega(2));
 
 theta0 = 0.0 ;         % Initial angle
 thetad0 = 1.0 ;        % Initial angular velocity
 r0 = [theta0 thetad0]; % Initial conditions
 
 % Solve the ODE
-[t2,w2] = ode45(@proj,tspan,r0,opts,g,L,gamma1,A,omega(1));
+[t2,w2] = ode45(@proj,tspan,r0,opts,g,L,gamma1,A,omega(2));
 
 ind1 = find(w1(:,2).*circshift(w1(:,2), [-1 0]) <= 0);
 ind1 = chop(ind1,4);
@@ -51,24 +107,6 @@ period1 = 2*mean(diff(t1(ind1)));  % Find the period
 ind2 = find(w2(:,2).*circshift(w2(:,2), [-1 0]) <= 0);
 ind2 = chop(ind2,4);
 period2 = 2*mean(diff(t2(ind2)));  % Find the period
-
-
-% Create plots
-
-figure(1)
-subplot(1,1,1)
-plot(t1,w1(:,1),'k-',t2,w2(:,1),'c-')
-legend('\theta_0 = 1','\theta_0 = 0')
-title('Angle \theta (t) vs. Time')
-xlabel('t')
-ylabel('\theta')
-ylim([-1 1])
-
-
-% From the graph, the data approaches a constant non-zero value, but the
-% initial part of the function looked like a sine/cosine function. The
-% transient part fs
-
 
 
 

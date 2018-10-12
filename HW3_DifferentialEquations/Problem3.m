@@ -1,9 +1,9 @@
 function [period,sol] = Problem3(varargin) 
 % Finds the period of a damped pendulum for large oscillations given the
 % length of the pendulum arm and initial conditions. All angles in radians.
-% Use the input "Problem2(L,theta0,thetad0)" where
+% Use the input "Problem3(L)" where
 % L = length of pendulum
-% theta0 = initial angle
+% and use L = 9.8/9 = 1.0889 to get g/L = 9
 
 
 %Setting initial conditions
