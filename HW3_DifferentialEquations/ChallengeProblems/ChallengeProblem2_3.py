@@ -1,3 +1,7 @@
+"""
+Challenge Problem 2.3: Find the initial height at whic
+"""
+
 import numpy as np
 import matplotlib.pyplot as plt
 

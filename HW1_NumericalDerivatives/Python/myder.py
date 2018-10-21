@@ -8,16 +8,13 @@ edited by: Osmaan S
 
 import numpy as np
 import matplotlib.pyplot as plt
-import math
 
 # Define the function f(x)
-def f(x):
-    return x**2
+f = lambda x: (np.sin(1/(x*(2-x)) ))**2
 
 # Define forward difference method for derivative, f'(x)
 # over the interval [a,b] for N points
 # h is spacing between each point
-
 
 
 
@@ -88,8 +85,7 @@ def secondiff(f,a,b,N):                           # Find f''(x)
 
 
 
-def f(x):
-    return (np.sin(1/(x*(2-x)) ))**2
+
                                                   # For good results, use a = -2, b = 4, N = 5000
 def hw1_part2(f,a,b,N):
     x = np.linspace(a,b,num=N)                    # Define x-axis
@@ -122,3 +118,5 @@ def hw1_part2(f,a,b,N):
     plt.ylabel('y')
     plt.title("f''(x)")
     plt.show()
+    
+hw1_part2(f,-1.5,3.5,5000)
