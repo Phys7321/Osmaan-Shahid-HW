@@ -60,7 +60,6 @@ period changes over time
 ind1 = find(w1(:,2).*circshift(w1(:,2), [-1 0]) <= 0);
 ind1 = chop(ind1,4);
 period1 = 2*mean(diff(t1(ind1)));  % Find the period
-
 ind2 = find(w2(:,2).*circshift(w2(:,2), [-1 0]) <= 0);
 ind2 = chop(ind2,4);
 period2 = 2*mean(diff(t2(ind2)));  % Find the period
