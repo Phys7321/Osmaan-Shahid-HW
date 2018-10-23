@@ -31,6 +31,9 @@ tspan = [0 N*T0];           % Integration time goes from 0 to N*T0
 opts = odeset('refine',6,'Events',@thetazero);
 
 % Solve diff. eq. for 10 different initial conditions, gamma1 <--> gamma5
+
+time().run structures
+
 [t0,w0] = ode45(@proj,tspan,r0,opts,g,L,gamma(1));
 [t1,w1] = ode45(@proj,tspan,r0,opts,g,L,gamma(2));
 [t2,w2] = ode45(@proj,tspan,r0,opts,g,L,gamma(3));
@@ -43,6 +46,8 @@ opts = odeset('refine',6,'Events',@thetazero);
 [t9,w9] = ode45(@proj,tspan,r0,opts,g,L,gamma(10));
 [t10,w10] = ode45(@proj,tspan,r0,opts,g,L,gamma(11));
 
+for i=..
+    ti = 
 
 ind0 = find(w0(:,2).*circshift(w0(:,2), [-1 0]) <= 0);
 ind1 = find(w1(:,2).*circshift(w1(:,2), [-1 0]) <= 0);
