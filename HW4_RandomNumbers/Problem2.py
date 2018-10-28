@@ -14,14 +14,14 @@ import time
 N = 100000
 
 x = np.zeros(N)
-delta = [1, 2, 3]
-times = np.zeros(9)
+delta = [1, 2, 3, 4, 5, 6, 7, 8, 9]
+times = []
 sigma = 10.
 sigma2 = sigma**2
 
 def metropolis(xold,d):                                     # xold = initial guess
     xtrial = np.random.random()                           # Single random number
-    xtrial = xold+(2*xtrial-1)*float(delta[d])            #  
+    xtrial = xold+(2*xtrial-1)*float(delta[d-1])            #  
     weight = np.exp(-0.5*(xtrial**2-xold**2)/sigma2)      # Gaussian distribution
     xnew = xold                                           #
     if(weight >= 1):                   # Accept
@@ -40,9 +40,9 @@ Nwarmup = 500000
 for i in range(Nwarmup):
     xwalker = metropolis(xwalker,2)
 ###
-x[0] = xwalker
+x[0] = xwalker   # xwalker is a single float
 
-start = time.process_time()
+
 for d in delta:
     start = time.process_time()
     x[0] = xwalker
@@ -52,7 +52,14 @@ for d in delta:
             x0 = metropolis(x0,d)
             x[i] = metropolis(x0,d)
     end = time.process_time()
-    times[d] = start - end
+    times.append(end - start)
+    
+pyplot.plot(delta,times)
+pyplot.xlabel('$\delta$')
+pyplot.ylabel('Time')
+pyplot.show()
+
+pyplot.figure()    
 
 binwidth=sigma/10
 pyplot.hist(x,bins=np.arange(-50,50., binwidth),density=True);
