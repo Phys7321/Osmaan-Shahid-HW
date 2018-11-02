@@ -1,0 +1,7 @@
+11.1
+General comment: you should still put some "master file" in your folders so that I don't have to guess at what the input arguments are (though you are including comments which is always good) and interpret the outputs (which is your job).
+Problem 1: Your function is outputing a NaN for the period, you should look into that. Graphs look good though
+Problem 2: The outputs in the function definition don't match what I think you want to output. In this program, you're not taking full advantage of programming, you are repeating a lot of code and you are creating variables with different names that hold the same type of information - that's what creating an array is for. All these quantities should be arrays. The plots look good though.
+Problem 3: Doesn't run
+Will continue
+11.2
