@@ -5,3 +5,6 @@ Problem 2: The outputs in the function definition don't match what I think you w
 Problem 3: Doesn't run
 Will continue
 11.2
+Problem 4: I'd like to see more work on the calculation of the delta as a function of the driving frequency w
+Problem 5: doesn't run for me. I do see you using arrays to store more of the parameters, now you should take the next step and use MATLAB array capabilities to eliminate unnecessary code.
+Problem 6: Looks good, you just need to do problem 7 and the sinusodial initial conditions
