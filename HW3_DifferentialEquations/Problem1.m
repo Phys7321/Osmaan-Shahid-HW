@@ -37,7 +37,7 @@ tspan = [0 N*T];           % Integration time goes from 0 to N*T
 opts = odeset('refine',6);
 r0 = [theta0 thetad0];     % [initial_angle initial_angle_velocity]
 [t,w] = ode45(@proj,tspan,r0,opts,g,L);
-sol = [t,w];    % t is x-axis, w is y-axis
+sol = [t,w];               % t is x-axis, w is y-axis
 ind= find(w(:,2).*circshift(w(:,2), [-1 0]) <= 0);
 ind = chop(ind,4);
 period= 2*mean(diff(t(ind)));
@@ -49,8 +49,8 @@ E = K + U ;                  % Total energy
 E0 = E(1);                   % Initial energy
 deltaE = E - E0;             % Change in energy over cycle
 
-Kavg = linspace(mean(K),mean(K),length(t));              % Average kinetic energy
-Uavg = linspace(mean(U),mean(U),length(t));              % Average potential energy
+Kavg = linspace(mean(K),mean(K),length(t));           % Average kinetic energy
+Uavg = linspace(mean(U),mean(U),length(t));           % Average potential energy
 
 % Create plots
 

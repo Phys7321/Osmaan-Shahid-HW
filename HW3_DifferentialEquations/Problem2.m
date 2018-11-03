@@ -19,11 +19,18 @@ omega = sqrt(g/L);
 T0= 2*pi/omega;
 N = 5;         % Number of oscillations to graph
 m = 1;         % Mass of pendulum bob
-thetad0 = 0.01 ;  % Initial angular speed = 0
+thetad0 = 0 ;  % Initial angular speed = 0
+
+theta0 = [0.1 0.2 0.4 0.8 1.0]; % Initial angles
 
 % Solve differential equation for 5 different initial angles
-theta1 = 0.1 ;
-r1 = [theta1 thetad0];
+
+% Define structures
+
+
+r1 = [theta0(1) thetad0];
+[t1,w1] = ode45(@proj,tspan,r1,opts,g,L);
+
 
 theta2 = 0.2 ;
 r2 = [theta2 thetad0];
