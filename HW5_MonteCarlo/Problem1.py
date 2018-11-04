@@ -110,19 +110,19 @@ for i in range(ngroups):
     xLCG[0] = x0                             # Seed is first value
     for p in range(n0-1):                    # For all values,
         xLCG[p+1] = (a*xLCG[p] + c)%m        # Define next value
-    xLCG = xLCG/10                           # Scale so 0 < x < 1
+    xLCG = xLCG/max(xLCG)                   # Scale so 0 < x < 1
     
     # Define x-axis for the IBM's random number generator
     xIBM = np.zeros(n0)                      # Set all zeros
     xIBM[0] = x0                             # Seed is first value
     for p in range(n0-1):                    # For all values,
         xIBM[p+1] = (65539*xIBM[p])%(2**31)  # Define next value
-    xIBM = xIBM/(10**9)                      # Scale so 0 < x < 1
+    xIBM = xIBM/max(xIBM)                    # Scale so 0 < x < 1
     
     ILCG[i] = 0.                             # Set i-th integral value to 0
     IIBM[i] = 0.                             # Set i-th integral value to 0
     
-    for j in range(n0):
+    for j in range(n0-1):
         ILCG[i] += np.sqrt(1-xLCG[j]**2)
         IIBM[i] += np.sqrt(1-xIBM[j]**2)
         
@@ -142,10 +142,9 @@ pyplot.xscale('log')
 pyplot.yscale('log')
 
 pyplot.figure(2)
-pyplot.plot(N,ILCG)
-pyplot.plot(N,IIBM)
+pyplot.plot(N,ILCG,c='red')
+pyplot.plot(N,IIBM,c='black')
 pyplot.xscale('log')
-pyplot.yscale('log')
 
 
 
