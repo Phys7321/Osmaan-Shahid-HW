@@ -110,7 +110,7 @@ for i in range(ngroups):
     xLCG[0] = x0                             # Seed is first value
     for p in range(n0-1):                    # For all values,
         xLCG[p+1] = (a*xLCG[p] + c)%m        # Define next value
-    xLCG = xLCG/max(xLCG)                   # Scale so 0 < x < 1
+    xLCG = xLCG/max(xLCG)                    # Scale so 0 < x < 1
     
     # Define x-axis for the IBM's random number generator
     xIBM = np.zeros(n0)                      # Set all zeros

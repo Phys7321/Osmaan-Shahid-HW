@@ -57,7 +57,7 @@ tspan = [0 N*T0];           % Integration time goes from 0 to N*T0
 opts = odeset('refine',6);
 
 % Solve diff. eq. for five different initial conditions, r1 <--> r5
-[solution(1).velocity,solution(1).angle] = ode45(@proj,solution(1).time,r1,opts,g,L);
+[solution(1).velocity,solution(1).angle] = ode45(@proj,solution(1).time,r1)
 
 [t1,w1] = ode45(@proj,tspan,r1,opts,g,L);
 [t2,w2] = ode45(@proj,tspan,r2,opts,g,L);
