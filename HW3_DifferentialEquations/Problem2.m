@@ -23,59 +23,69 @@ thetad0 = 0 ;  % Initial angular speed = 0
 
 theta0 = [0.1 0.2 0.4 0.8 1.0]; % Initial angles
 
+% Define initial angle and velocity in a vector called "r"
+% so that r = [initial_angle initial_velocity]
+for i = 1:5
+    r(i,:) = [theta0(i) thetad0];
+end    
+
+
 % Solve differential equation for 5 different initial angles
 
-% Define structure called "solution" with fields 'time', 'velocity', and
+% Define structure called "solution" or "sol" with fields 'time', 'velocity', and
 % 'angle'
 
 % Define as empty arrays, and then overwrite as we get the solution
 
-value = {[],[],[],[],[],[],[],[],[],[]};
-solution = structure('time',value,'velocity',value,'angle',value);
+empty = {[],[],[],[],[]};
+sol = struct('time',empty,'velocity',empty,'angle',empty);
+% Structure fields are time, velocity, and angle
+% Now define a structure for energies
+
+energy = struct('KE',empty,'U',empty,'Etot',empty);
 
 
-
-
-r1 = [theta0(1) thetad0];
-[t1,w1] = ode45(@proj,tspan,r1,opts,g,L);
-
-
-theta2 = 0.2 ;
-r2 = [theta2 thetad0];
-
-theta3 = 0.4 ;
-r3 = [theta3 thetad0];
-
-theta4 = 0.8 ;
-r4 = [theta4 thetad0];
-
-theta5 = 1.0 ;
-r5 = [theta5 thetad0];
-
-tspan = [0 N*T0];           % Integration time goes from 0 to N*T0
+tspan = [0 N*T0];               % Integration time goes from 0 to N*T0
 %opts = odeset('events',@events,'refine',6); %Here for future event finder
 opts = odeset('refine',6);
 
-% Solve diff. eq. for five different initial conditions, r1 <--> r5
-[solution(1).velocity,solution(1).angle] = ode45(@proj,solution(1).time,r1,opts,g,L);
+% Solve diff. eq. for five different initial angles
 
-[t1,w1] = ode45(@proj,tspan,r1,opts,g,L);
-[t2,w2] = ode45(@proj,tspan,r2,opts,g,L);
-[t3,w3] = ode45(@proj,tspan,r3,opts,g,L);
-[t4,w4] = ode45(@proj,tspan,r4,opts,g,L);
-[t5,w5] = ode45(@proj,tspan,r5,opts,g,L);
+% Takes the form
+% [time, angle(t)] = ode45(function,t-axis,[initial_angle initial_speed],options,g,L)
+for i = 1:5
+    [sol(i).time,v] = ode45(@proj,tspan,r(i,:),opts,g,L);
+    sol(i).angle = v(:,1);
+    sol(i).velocity = v(:,2);
+end
 
-ind1= find(w1(:,2).*circshift(w1(:,2), [-1 0]) <= 0);
-ind1 = chop(ind1,4);
-period1 = 2*mean(diff(t1(ind1)));
 
-ind2= find(w2(:,2).*circshift(w2(:,2), [-1 0]) <= 0);
-ind2 = chop(ind2,4);
-period2 = 2*mean(diff(t2(ind2)));
+[t1,w1] = ode45(@proj,tspan,r(1,:),opts,g,L);
+[t2,w2] = ode45(@proj,tspan,r(2,:),opts,g,L);
+[t3,w3] = ode45(@proj,tspan,r(3,:),opts,g,L);
+[t4,w4] = ode45(@proj,tspan,r(4,:),opts,g,L);
+[t5,w5] = ode45(@proj,tspan,r(5,:),opts,g,L);
+
+%{
+ind1= find(sol(1).velocity.*circshift(sol(1).velocity, [-1 0]) <= 0)
+ind1 = chop(ind1,4)
+period1 = 2*mean(diff(sol(1).time(ind1)))
+%}
+
+ind1= find(w1(:,2).*circshift(w1(:,2), [-1 0]) <= 0)
+ind1 = chop(ind1,4)
+period1 = 2*mean(diff(t1(ind1)))
+length(ind1)
+
+ind2= find(w2(:,2).*circshift(w2(:,2), [-1 0]) <= 0)
+ind2 = chop(ind2,4)
+period2 = 2*mean(diff(t2(ind2)))
+length(ind2)
 
 ind3= find(w3(:,2).*circshift(w3(:,2), [-1 0]) <= 0);
 ind3 = chop(ind3,4);
 period3 = 2*mean(diff(t3(ind3)));
+length(ind3)
 
 ind4= find(w4(:,2).*circshift(w4(:,2), [-1 0]) <= 0);
 ind4 = chop(ind4,4);
