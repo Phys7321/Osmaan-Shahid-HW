@@ -14,200 +14,107 @@ switch nargin
        L = varargin{1};
 end
 
-g=9.81;
-omega = sqrt(g/L);
-T0= 2*pi/omega;
-N = 5;         % Number of oscillations to graph
-m = 1;         % Mass of pendulum bob
-thetad0 = 0 ;  % Initial angular speed = 0
-
-theta0 = [0.1 0.2 0.4 0.8 1.0]; % Initial angles
-
-% Define initial angle and velocity in a vector called "r"
-% so that r = [initial_angle initial_velocity]
-for i = 1:5
-    r(i,:) = [theta0(i) thetad0];
-end    
+g=9.81;                             % Acceleration due to gravity
+omega = sqrt(g/L);                  % Natural angular frequency
+T0= 2*pi/omega;                     % Natural period
+N = 5;                              % Number of oscillations to graph
+m = 1;                              % Mass of pendulum bob
+thetad0 = 0 ;                       % Initial angular speed = 0
+theta0 = [0.1 0.2 0.4 0.8 1.0];     % Initial angles
 
 
 % Solve differential equation for 5 different initial angles
-
 % Define structure called "solution" or "sol" with fields 'time', 'velocity', and
 % 'angle'
-
 % Define as empty arrays, and then overwrite as we get the solution
+% Structure fields are time, velocity, and angle
 
 empty = {[],[],[],[],[]};
 sol = struct('time',empty,'velocity',empty,'angle',empty);
-% Structure fields are time, velocity, and angle
-% Now define a structure for energies
-
-energy = struct('KE',empty,'U',empty,'Etot',empty);
-
 
 tspan = [0 N*T0];               % Integration time goes from 0 to N*T0
-%opts = odeset('events',@events,'refine',6); %Here for future event finder
-opts = odeset('refine',6);
+opts = odeset('refine',6);      % Options used in the ODE solver
 
 % Solve diff. eq. for five different initial angles
-
 % Takes the form
 % [time, angle(t)] = ode45(function,t-axis,[initial_angle initial_speed],options,g,L)
+
 for i = 1:5
-    [sol(i).time,v] = ode45(@proj,tspan,r(i,:),opts,g,L);
+    [sol(i).time,v] = ode45(@proj,tspan,[theta0(i) thetad0],opts,g,L);
     sol(i).angle = v(:,1);
     sol(i).velocity = v(:,2);
 end
 
+Period = zeros(1,5);       % Preallocate to save computing time
+ThetaMax = zeros(1,5);     % Preallocate to save computing time
 
-[t1,w1] = ode45(@proj,tspan,r(1,:),opts,g,L);
-[t2,w2] = ode45(@proj,tspan,r(2,:),opts,g,L);
-[t3,w3] = ode45(@proj,tspan,r(3,:),opts,g,L);
-[t4,w4] = ode45(@proj,tspan,r(4,:),opts,g,L);
-[t5,w5] = ode45(@proj,tspan,r(5,:),opts,g,L);
-
-%{
-ind1= find(sol(1).velocity.*circshift(sol(1).velocity, [-1 0]) <= 0)
-ind1 = chop(ind1,4)
-period1 = 2*mean(diff(sol(1).time(ind1)))
-%}
-
-ind1= find(w1(:,2).*circshift(w1(:,2), [-1 0]) <= 0)
-ind1 = chop(ind1,4)
-period1 = 2*mean(diff(t1(ind1)))
-length(ind1)
-
-ind2= find(w2(:,2).*circshift(w2(:,2), [-1 0]) <= 0)
-ind2 = chop(ind2,4)
-period2 = 2*mean(diff(t2(ind2)))
-length(ind2)
-
-ind3= find(w3(:,2).*circshift(w3(:,2), [-1 0]) <= 0);
-ind3 = chop(ind3,4);
-period3 = 2*mean(diff(t3(ind3)));
-length(ind3)
-
-ind4= find(w4(:,2).*circshift(w4(:,2), [-1 0]) <= 0);
-ind4 = chop(ind4,4);
-period4 = 2*mean(diff(t4(ind4)));
-
-ind5= find(w5(:,2).*circshift(w5(:,2), [-1 0]) <= 0);
-ind5 = chop(ind5,4);
-period5 = 2*mean(diff(t5(ind5)));
+% Find the period and maximum angle
+for i = 1:5
+    ind = find(sol(i).velocity.*circshift(sol(i).velocity, [-1 0]) <= 0);
+    ind = chop(ind,4);
+    Period(i) = 2*mean(diff(sol(i).time(ind)));
+    length(ind);
+    ThetaMax(i) = max(sol(i).angle);
+end
 
 
+% Now define a structure for energies
 
-
-
-
+energy = struct('KE',empty,'U',empty,'Etot',empty);
 
 % Define energies
-K1 = m*(L^2)*(w1(:,2).^2)/2;   % Kinetic energy
-U1 = m*g*L*(1-cos(w1(:,1))) ;  % Potential energy
-E1 = K1 + U1 ;                 % Total energy
-Einitial1 = E1(1);             % Initial energy
-deltaE1 = E1 - Einitial1;      % Change in energy over cycle
-Kavg1 = linspace(mean(K1),mean(K1),length(t1));   % Average kinetic energy
-Uavg1 = linspace(mean(U1),mean(U1),length(t1));   % Average potential energy
-
-% Define energies
-K2 = m*(L^2)*(w2(:,2).^2)/2;   % Kinetic energy
-U2 = m*g*L*(1-cos(w2(:,1))) ;  % Potential energy
-E2 = K2 + U2 ;                 % Total energy
-Einitial2 = E2(1);             % Initial energy
-deltaE2 = E2 - Einitial2;      % Change in energy over cycle
-Kavg2 = linspace(mean(K2),mean(K2),length(t2));   % Average kinetic energy
-Uavg2 = linspace(mean(U2),mean(U2),length(t2));   % Average potential energy
-
-% Define energies
-K3 = m*(L^2)*(w3(:,2).^2)/2;   % Kinetic energy
-U3 = m*g*L*(1-cos(w3(:,1))) ;  % Potential energy
-E3 = K3 + U3 ;                 % Total energy
-Einitial3 = E3(1);             % Initial energy
-deltaE3 = E3 - Einitial3;      % Change in energy over cycle
-Kavg3 = linspace(mean(K3),mean(K3),length(t3));   % Average kinetic energy
-Uavg3 = linspace(mean(U3),mean(U3),length(t3));   % Average potential energy
-
-% Define energies
-K4 = m*(L^2)*(w4(:,2).^2)/2;   % Kinetic energy
-U4 = m*g*L*(1-cos(w4(:,1))) ;  % Potential energy
-E4 = K4 + U4 ;                 % Total energy
-Einitial4 = E4(1);             % Initial energy
-deltaE4 = E4 - Einitial4;      % Change in energy over cycle
-Kavg4 = linspace(mean(K4),mean(K4),length(t4));   % Average kinetic energy
-Uavg4 = linspace(mean(U4),mean(U4),length(t4));   % Average potential energy
-
-% Define energies
-K5 = m*(L^2)*(w5(:,2).^2)/2;   % Kinetic energy
-U5 = m*g*L*(1-cos(w5(:,1))) ;  % Potential energy
-E5 = K5 + U5 ;                 % Total energy
-Einitial5 = E5(1);             % Initial energy
-deltaE5 = E5 - Einitial5;      % Change in energy over cycle
-Kavg5 = linspace(mean(K5),mean(K5),length(t5));   % Average kinetic energy
-Uavg5 = linspace(mean(U5),mean(U5),length(t5));   % Average potential energy
+for i = 1:5
+    energy(i).KE = m*(L^2)*(sol(i).velocity).^2/2 ;   % Kinetic energy
+    energy(i).U = m*g*L*(1-cos(sol(i).angle)) ;       % Potential energy
+    energy(i).Etot = energy(i).KE + energy(i).U ;     % Total energy
+end
 
 
-
-
-
-
-% Create plots
+% Create plots of angle and angular velocity vs. time
 
 figure(1)
-subplot(3,1,1)
-plot(t1,w1(:,1),'k-',t1,w1(:,2),'b--')
-legend('Angle','Angular Velocity')
-title('Angle and Angular Velocity for \theta_0 = 0.1')
-xlabel('t')
-ylabel('\theta')
-ylim([-2 2])
+for i = 1:3
+    subplot(3,1,i)
+    plot(sol(i).time,sol(i).angle,'k-',sol(i).time,sol(i).velocity,'b--');
+    legend('Angle','Angular Velocity')
+    title(sprintf('Angle and Angular Velocity for \\theta_0 = %0.1f',theta0(i)))
+    xlabel('t')
+    ylabel('\theta')
+    ylim([-2 2])
+end
 
-subplot(3,1,2)
-plot(t2,w2(:,1),'k-',t2,w2(:,2),'b--')
-legend('Angle','Angular Velocity')
-title('Angle and Angular Velocity for \theta_0 = 0.2')
-xlabel('t')
-ylabel('\theta')
-ylim([-2 2])
-
-subplot(3,1,3)
-plot(t3,w3(:,1),'k-',t3,w3(:,2),'b--')
-legend('Angle','Angular Velocity')
-title('Angle and Angular Velocity for \theta_0 = 0.4')
-xlabel('t')
-ylabel('\theta')
-ylim([-2 2])
+% Not all subplots fit in one figure, so make a second one
 
 figure(2)
-subplot(2,1,1)
-plot(t4,w4(:,1),'k-',t4,w4(:,2),'b--')
-legend('Angle','Angular Velocity')
-title('Angle and Angular Velocity for \theta_0 = 0.8')
-xlabel('t')
-ylabel('\theta')
-ylim([-3 3])
+for i = 4:5
+    subplot(2,1,i-3)
+    plot(sol(i).time,sol(i).angle,'k-',sol(i).time,sol(i).velocity,'b--');
+    legend('Angle','Angular Velocity')
+    title(sprintf('Angle and Angular Velocity for \\theta_0 = %0.1f',theta0(i)))
+    xlabel('t')
+    ylabel('\theta')
+    ylim([-3 3])
+end
 
-subplot(2,1,2)
-plot(t5,w5(:,1),'k-',t5,w5(:,2),'b--')
-legend('Angle','Angular Velocity')
-title('Angle and Angular Velocity for \theta_0 = 1.0')
-xlabel('t')
-ylabel('\theta')
-ylim([-3 3])
+
+% Create plot of total energy vs. time
+
+colors = ['k' 'c' 'g' 'y' 'r'];    % Make vector of colors for plot legend
 
 figure(3)
-plot(t1,E1,'k',t2,E2,'c',t3,E3,'g',t4,E4,'y',t5,E5,'r')
+hold on
+for i = 1:5                                      % For each initial angle,
+    plot(sol(i).time,energy(i).Etot,colors(i))   % Plot(time,total_energy,color)
+end
+hold off
+
 legend('\theta_0=0.1','\theta_0=0.2','\theta_0=0.4','\theta_0=0.8','\theta_0=1.0')
 title('Total Energy')
 xlabel('t')
 ylabel('Energy')
 
 
-
-
-Period = [period1 period2 period3 period4 period5] ;
-ThetaMax = [max(w1(:,1)) max(w2(:,1)) max(w3(:,1)) max(w4(:,1)) max(w5(:,1))];
-
+% Plot period .vs maximum angle
 figure(4)
 plot(ThetaMax,Period,'k-')
 title('Period vs. \theta_{max}')

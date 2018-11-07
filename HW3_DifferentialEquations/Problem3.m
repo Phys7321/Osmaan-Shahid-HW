@@ -14,14 +14,14 @@ switch nargin
        L = varargin{1};
 end
 
-g=9.81;
-omega = sqrt(g/L);
-T0= 2*pi/omega; % Period of simple harmonic oscillator
-N = 6;          % Number of oscillations to graph
-m = 1;          % Mass of pendulum bob
-theta0 = 1.0 ;  % Initial angle
-thetad0 = 0.0 ; % Initial angular velocity
-r0 = [theta0 thetad0]; % Initial conditions
+g=9.81;                             % Acceleration due to gravity
+omega = sqrt(g/L);                  % Natural angular frequency
+T0= 2*pi/omega;                     % Period of simple harmonic oscillator
+N = 6;                              % Number of oscillations to graph
+m = 1;                              % Mass of pendulum bob
+theta0 = 1.0 ;                      % Initial angle
+thetad0 = 0.0 ;                     % Initial angular velocity
+r0 = [theta0 thetad0];              % Initial conditions
 
 % Solve differential equation for different damping factors
 gamma = [0 0.5 1 2 3 4 5 6 7 8 9];
