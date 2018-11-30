@@ -40,7 +40,7 @@ opts = odeset('refine',6);      % Options used in the ODE solver
 % [time, angle(t)] = ode45(function,t-axis,[initial_angle initial_speed],options,g,L)
 
 for i = 1:5
-    [sol(i).time,v] = ode45(@proj,tspan,[theta0(i) thetad0],opts,g,L);
+    [sol(i).time , v] = ode45(@proj,tspan,[theta0(i) thetad0],opts,g,L);
     sol(i).angle = v(:,1);
     sol(i).velocity = v(:,2);
 end
@@ -50,10 +50,8 @@ ThetaMax = zeros(1,5);     % Preallocate to save computing time
 
 % Find the period and maximum angle
 for i = 1:5
-    ind = find(sol(i).velocity.*circshift(sol(i).velocity, [-1 0]) <= 0);
-    ind = chop(ind,4);
+    ind = find(sol(i).angle.*circshift(sol(i).angle, [-1 0]) <= 0);
     Period(i) = 2*mean(diff(sol(i).time(ind)));
-    length(ind);
     ThetaMax(i) = max(sol(i).angle);
 end
 
