@@ -82,17 +82,15 @@ hold off                                          % Hold off
 %             Find the period for each gamma/damping factor
 
 Period = zeros(1,11);                    % Preallocate to save computing time
+
 for i = 1:11
     ind = find(sol(i).angle.*circshift(sol(i).angle, [-1 0]) <= 0);
     Period(i) = 2*mean(diff(sol(i).time(ind)));
 end
+
 Frequency = 1./Period;                   % Define frequency as f = 1/T
 
-
-
-
-
-%           Plot Period and Frequency vs. gamma (damping factor)
+% Plot Period and Frequency vs. gamma (damping factor)
 figure(2)                                             % Figure 1
 plot(gamma,Period,'ok-',gamma,Frequency,'ob-');       % Plot Period and Frequency vs. gamma
 legend('Period','Frequency')                          % Plot legend
@@ -117,11 +115,7 @@ for i = 1:11                                          % For each gamma,
     energy(i).Etot = energy(i).KE + energy(i).U ;     % Total energy = KE + U
 end
 
-
-
-
-
-%                   Find average energies per cycle
+% Find average energies per cycle
 % Define avg energy structure
 % Fields are 'Average Kinetic Energy', 'Average Potential Energy',
 % and 'Average Total Energy'
@@ -143,7 +137,7 @@ end
 
 colors = ['k' 'c' 'g' 'y' 'r' 'k' 'c' 'g' 'y' 'r' 'k'];    % Make vector of colors for plot legend
 
-figure(3)                                         % Figure 2
+figure(2)                                         % Figure 2
 hold on                                           % Allows us to add trajectories to same plot
 for i = 1:11                                      % For each gamma/damping factor,
     plot(sol(i).time,avg_energy(i).Kavg,colors(i));     % Plot angle vs. time
@@ -159,7 +153,7 @@ hold off                                          % Hold off
 
 
 
-figure(4)
+figure(1)
 subplot(3,1,1)
 plot(t0,w0(:,1),'k-',t1,w1(:,1),'c-',t2,w2(:,1),'r-',t3,w3(:,1),'g-',t4,w4(:,1),'y-')
 legend('\gamma = 0','\gamma = 0.5','\gamma = 1','\gamma = 2','\gamma = 3')
@@ -187,14 +181,14 @@ ylabel('\gamma')
 
 
 
-figure(5)
+figure(2)
 plot(t1,E1,'k',t4,E4,'c',t6,E6,'g',t8,E8,'y',t10,E10,'r')
 legend('\gamma = 0.5','\gamma = 2','\gamma = 4','\gamma = 6','\gamma = 8')
 title('Total Energy')
 xlabel('t')
 ylabel('Energy')
 
-figure(6)
+figure(3)
 plot(w1(:,1),w1(:,2),'k-',w4(:,1),w4(:,2),'c-',w6(:,1),w6(:,2),'g-',w8(:,1),w8(:,2),'r-',w10(:,1),w10(:,2),'y-')
 legend('\gamma = 0.5','\gamma = 2','\gamma = 4','\gamma = 6','\gamma = 8')
 title('Phase Space')

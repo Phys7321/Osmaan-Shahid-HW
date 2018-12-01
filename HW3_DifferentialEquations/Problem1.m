@@ -33,8 +33,8 @@ m = 1; % Mass of pendulum bob
 
 
 tspan = [0 N*T];           % Integration time goes from 0 to N*T
-%opts = odeset('events',@events,'refine',6); %Here for future event finder
 opts = odeset('refine',6);
+
 r0 = [theta0 thetad0];     % [initial_angle initial_angle_velocity]
 [t,w] = ode45(@proj,tspan,r0,opts,g,L);
 sol = [t,w];               % t is x-axis, w is y-axis

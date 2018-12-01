@@ -57,6 +57,8 @@ end
 
 
 % Now define a structure for energies
+% Fields are 'Kinetic Energy', 'Potential Energy', and
+% 'Total Energy'
 
 energy = struct('KE',empty,'U',empty,'Etot',empty);
 
