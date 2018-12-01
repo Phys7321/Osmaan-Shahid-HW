@@ -66,14 +66,15 @@ colors = ['k' 'c' 'g' 'y' 'r' 'k' 'c' 'g' 'y' 'r' 'k'];    % Make vector of colo
 figure(1)                                         % Figure 2
 hold on                                           % Allows us to add trajectories to same plot
 for i = 1:11                                      % For each gamma/damping factor,
-    plot(sol(i).time,sol(i).angle,colors(i));     % Plot angle vs. time
-    legend(sprintf('\\gamma = %0.1f',gamma(i)))   % Plot legend
+    txt = [sprintf('\\gamma = '),num2str(gamma(i))];                % Define to use as legend
+    plot(sol(i).time,sol(i).angle,colors(i),'DisplayName',txt);     % Plot angle vs. time (DisplayName->Legend)
     title(sprintf('Angle vs. Time'))              % Plot title
     xlabel('t (s)')                               % Label x-axis
     ylabel('\theta (rad)')                        % Label y-axis
     ylim([-2 2])                                  % y-axis range
 end                                               % End for loop
 hold off                                          % Hold off
+legend show                                       % Display the legend
 
 
 
@@ -139,69 +140,39 @@ end
 
 
 
-%                  Plot average kinetic energy over time
-
-colors = ['k' 'c' 'g' 'y' 'r' 'k' 'c' 'g' 'y' 'r' 'k'];    % Make vector of colors for plot legend
-
-figure(3)                                         % Figure 2
+%                  Plot phase space (angle, velocity)
+figure(3)                                         % Figure 3
 hold on                                           % Allows us to add trajectories to same plot
-for i = 1:11                                      % For each gamma/damping factor,
-    plot(sol(i).time,avg_energy(i).Kavg,colors(i));     % Plot angle vs. time
-    legend(sprintf('\\gamma = %0.1f',gamma(i)))   % Plot legend
-    title(sprintf('Angle vs. Time'))              % Plot title
-    xlabel('t (s)')                               % Label x-axis
-    ylabel('\theta (rad)')                        % Label y-axis
-    ylim([-2 2])                                  % y-axis range
+for i = [2 4 6 8 10]                              % For certain gammas (defined in HW)
+    txt = [sprintf('\\gamma = '),num2str(gamma(i))];                % Define to use as legend
+    plot(sol(i).angle,sol(i).velocity,colors(i),'DisplayName',txt); % Plot velocity vs. angle (DisplayName->Legend)
+    title('Velocity vs. Angle')                   % Plot title
+    xlabel(sprintf('\\theta (rad)'))              % Label x-axis
+    ylabel(sprintf('\\omega (rad/s)'))            % Label y-axis
 end                                               % End for loop
 hold off                                          % Hold off
+legend show                                       % Display the legend
 
 
 
 
 
-figure(4)
-subplot(3,1,1)
-plot(t0,w0(:,1),'k-',t1,w1(:,1),'c-',t2,w2(:,1),'r-',t3,w3(:,1),'g-',t4,w4(:,1),'y-')
-legend('\gamma = 0','\gamma = 0.5','\gamma = 1','\gamma = 2','\gamma = 3')
-title('Angle vs. Time for Different \gamma ''s')
-xlabel('t')
-ylabel('\theta')
-ylim([-1 1])
+%                  Plot kinetic energy over time
 
-subplot(3,1,2)
-plot(gamma,Period,'k-')
-title('Period vs. \gamma')
-xlabel('T')
-ylabel('\gamma')
-
-AngFreq = zeros(1,11) ;
-for i = 1:11
-    AngFreq(i) = 2*pi./Period(i) ;
-end
-
-subplot(3,1,3)
-plot(gamma,AngFreq,'k-')
-title('Angular Frequency vs. \gamma')
-xlabel('\omega')
-ylabel('\gamma')
+figure(4)                                         % Figure 4
+hold on                                           % Allows us to add trajectories to same plot
+for i = 1:11                                      % For each gamma/damping factor,
+    txt = [sprintf('\\gamma = '),num2str(gamma(i))];                % Define to use as legend
+    plot(sol(i).time,energy(i).KE,colors(i),'DisplayName',txt);     % Plot angle vs. time (DisplayName->Legend)
+    title('Kinetic Energy vs. Time')              % Plot title
+    xlabel('t (s)')                               % Label x-axis
+    ylabel('Kinetic Energy (J)')                  % Label y-axis
+end                                               % End for loop
+hold off                                          % Hold off
+legend show                                       % Display the legend
 
 
 
-figure(5)
-plot(t1,E1,'k',t4,E4,'c',t6,E6,'g',t8,E8,'y',t10,E10,'r')
-legend('\gamma = 0.5','\gamma = 2','\gamma = 4','\gamma = 6','\gamma = 8')
-title('Total Energy')
-xlabel('t')
-ylabel('Energy')
-
-figure(6)
-plot(w1(:,1),w1(:,2),'k-',w4(:,1),w4(:,2),'c-',w6(:,1),w6(:,2),'g-',w8(:,1),w8(:,2),'r-',w10(:,1),w10(:,2),'y-')
-legend('\gamma = 0.5','\gamma = 2','\gamma = 4','\gamma = 6','\gamma = 8')
-title('Phase Space')
-xlabel('\theta')
-ylabel('\theta dot')
-xlim([-1.5 1.5])
-ylim([-3 3])
 
 
 
