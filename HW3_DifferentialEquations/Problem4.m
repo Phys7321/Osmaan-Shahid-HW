@@ -1,4 +1,4 @@
-function [sol] = Problem4(varargin) 
+function [sol1,sol2] = Problem4(varargin) 
 % Finds the period of a damped pendulum for large oscillations with a
 % driving force, given the length of the pendulum arm and initial 
 % conditions. All angles in radians. % Use the input "Problem4(L)" where
@@ -33,26 +33,63 @@ omega = [0 1 2 2.2 2.4 2.6 2.8 3.0 3.2 3.4 4] ;   % Driving force frequencies
 
 % Solve differential equation for different driving force frequencies
 
-tspan = [0 N*T0];                              % Integration time goes from 0 to N*T0
-opts = odeset('refine',6);                     % Set up options
+% Define structure called "sol" with fields 'time', 'velocity', and
+% 'angle'
+% Since there are two damping factors (gamma = 0.5 and 1.5), we need two
+% structures so we define sol1 and sol2
+% Define as empty arrays, and then overwrite as we get the solution
+% Structure fields are time, velocity, and angle
 
-% Solve the ODE for omega = 2
+empty = {[],[],[],[],[],[],[],[],[],[],[]};                   % 11 sets, one for each gamma
+sol1 = struct('time',empty,'velocity',empty,'angle',empty);   % Solution structure for gamma1 = 0.5
+sol1 = struct('time',empty,'velocity',empty,'angle',empty);   % Solution structure for gamma2 = 1.5
+
+tspan = [0 N*T0];                                             % Integration time goes from 0 to N*T0
+opts = odeset('refine',6);                                    % Set up options
+
+% Solving ODEs for Part (a)
+% Solutions take the form
+% [time, v] = ode45(function,t-axis,[initial_angle initial_speed],options,g,L,gamma)
+% where v = [angle(t), velocity(t)] and 'equil' is time that pendulum reaches equilibrium
+
+% Solve the ODE for omega = 2, first type of initial conditions
+theta0 = 1.0 ;                                                % Initial angle
+thetad0 = 0.0 ;                                               % Initial angular velocity
+r0 = [theta0 thetad0];                                        % Initial conditions
+% sol(3) corresponds to the solution when omega = 2 (see definition of omega above)
+[sol(3).time, v] = ode45(@proj,tspan,r0,opts,g,L,gamma1,A,omega(3));
+sol(3).angle = v(:,1);                                        % angles = first column of v
+sol(3).velocity = v(:,2);                                     % angular velocities = second column of v
+
+
+
+
+
+%                Create plot of angle vs. time for omega = 2
+
+figure(1)                                                         % Figure 1
+plot(sol(3).time,sol(3).angle);                                   % Plot angle vs. time
+title(sprintf('Angle vs. Time for \\omega = 2, \\theta_0 = 1 '))  % Plot title
+xlabel('t (s)')                                                   % Label x-axis
+ylabel('\theta (rad)')                                            % Label y-axis
+
+
+
+
+% Solve the ODE for omega = 2, second type of initial conditions
+theta0 = 0.0 ;                                                % Initial angle
+thetad0 = 1.0 ;                                               % Initial angular velocity
+r0 = [theta0 thetad0];                                        % Initial conditions
+[t4,w4] = ode45(@proj,tspan,r0,opts,g,L,gamma1,A,omega(3));
+
+
+% Solve the ODE for omega = 1
 theta0 = 0.0 ;                                 % Initial angle
 thetad0 = 1.0 ;                                % Initial angular velocity
 r0 = [theta0 thetad0];                         % Initial conditions
 [t2,w2] = ode45(@proj,tspan,r0,opts,g,L,gamma1,A,omega(2));
 
-% Solve the ODE for omega = 2, first type of initial conditions
-theta0 = 1.0 ;         % Initial angle
-thetad0 = 0.0 ;        % Initial angular velocity
-r0 = [theta0 thetad0]; % Initial conditions
-[t3,w3] = ode45(@proj,tspan,r0,opts,g,L,gamma1,A,omega(3));
 
-% Solve the ODE for omega = 2, second type of initial conditions
-theta0 = 0.0 ;         % Initial angle
-thetad0 = 1.0 ;        % Initial angular velocity
-r0 = [theta0 thetad0]; % Initial conditions
-[t4,w4] = ode45(@proj,tspan,r0,opts,g,L,gamma1,A,omega(3));
 
 % Solve the ODE for omega = 4
 theta0 = 0.0 ;         % Initial angle
