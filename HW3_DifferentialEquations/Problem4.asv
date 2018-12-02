@@ -36,10 +36,10 @@ omega = [0 1 2 2.2 2.4 2.6 2.8 3.0 3.2 3.4 4] ;   % Driving force frequencies
 tspan = [0 N*T0];                              % Integration time goes from 0 to N*T0
 opts = odeset('refine',6);                     % Set up options
 
-% Solve the ODE for omega = 2
+% Solve the ODE for omega = 1
 theta0 = 0.0 ;                                 % Initial angle
-thetad0 = 1.0 ;                                % Initial angular velocity
-r0 = [theta0 thetad0];                         % Initial conditions
+thetad0 = 1.0 ;              % Initial angular velocity
+r0 = [theta0 thetad0]; % Initial conditions
 [t2,w2] = ode45(@proj,tspan,r0,opts,g,L,gamma1,A,omega(2));
 
 % Solve the ODE for omega = 2, first type of initial conditions
