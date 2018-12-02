@@ -43,27 +43,33 @@ sol = struct('time',empty,'velocity',empty,'angle',empty);   % Solution structur
 
 tspan = [0 N*T0];                                            % Integration time goes from 0 to N*T0
 opts = odeset('refine',6,'Events',@thetazero);               % Options
+equilibrium = zeros(1,11);                                   % Preallocate equilibrium times
 
 % Solve diff. eq. for 11 different damping factors
 % Takes the form
 % [time, v] = ode45(function,t-axis,[initial_angle initial_speed],options,g,L,gamma)
-% where v = [angle(t), velocity(t)]
+% where v = [angle(t), velocity(t)] and 'equil' is time that pendulum reaches equilibrium
 
 for i = 1:11                             % For each damping factor, solve ODEs
-    [sol(i).time , v] = ode45(@proj,tspan,[theta0 thetad0],opts,g,L,gamma(i));
+    [sol(i).time, v,equil] = ode45(@proj,tspan,[theta0 thetad0],opts,g,L,gamma(i));
     sol(i).angle = v(:,1);               % angles = first column of v
     sol(i).velocity = v(:,2);            % angular velocities = second column of v
+    if equil > 0                         % If pendulum reaches equilibrium,
+        equilibrium(i) = equil;          % Put equilibrium time in vector called 'equilibrium'
+    else                                 % If pendulum does not reach equilibrium
+        equilibrium(i) = NaN;            % No equilibrium time exists
+    end
 end
 
 
 
 
 
-%                       Create plots of angle vs. time
+%                        Create plot of angle vs. time
 
 colors = ['k' 'c' 'g' 'y' 'r' 'k' 'c' 'g' 'y' 'r' 'k'];    % Make vector of colors for plot legend
 
-figure(1)                                         % Figure 2
+figure(1)                                         % Figure 1
 hold on                                           % Allows us to add trajectories to same plot
 for i = 1:11                                      % For each gamma/damping factor,
     txt = [sprintf('\\gamma = '),num2str(gamma(i))];                % Define to use as legend
@@ -80,21 +86,34 @@ legend show                                       % Display the legend
 
 
 
+%                 Create plot of Equilibrium Time vs. gamma
+
+figure(2)                                         % Figure 2
+plot(gamma,equilibrium,'-ok');                    % Plot Equil. Time vs. gamma/damping factor
+title(sprintf('Equilibrium Time vs. \\gamma'))    % Plot title
+xlabel(sprintf('\\gamma'))                        % Label x-axis
+ylabel('Equilibrium Time (s)')                    % Label y-axis
+xlim([min(gamma) max(gamma)])                     % x-axis spans all gamma values
+
+
+
+
+
 %             Find the period for each gamma/damping factor
 
-Period = zeros(1,11);                    % Preallocate to save computing time
-for i = 1:11
+Period = zeros(1,11);                               % Preallocate to save computing time
+for i = 1:11                                        % For each initial angle
     ind = find(sol(i).angle.*circshift(sol(i).angle, [-1 0]) <= 0);
-    Period(i) = 2*mean(diff(sol(i).time(ind)));
+    Period(i) = 2*mean(diff(sol(i).time(ind)));     % Find the period
 end
-Frequency = 1./Period;                   % Define frequency as f = 1/T
+Frequency = 1./Period;                              % Define frequency as f = 1/T
 
 
 
 
 
 %           Plot Period and Frequency vs. gamma (damping factor)
-figure(2)                                             % Figure 1
+figure(3)                                             % Figure 3
 plot(gamma,Period,'ok-',gamma,Frequency,'ob-');       % Plot Period and Frequency vs. gamma
 legend('Period','Frequency')                          % Plot legend
 title(sprintf('Period and Frequency vs. \\gamma'))    % Plot title
@@ -141,7 +160,7 @@ end
 
 
 %                  Plot phase space (angle, velocity)
-figure(3)                                         % Figure 3
+figure(4)                                         % Figure 4
 hold on                                           % Allows us to add trajectories to same plot
 for i = [2 4 6 8 10]                              % For certain gammas (defined in HW)
     txt = [sprintf('\\gamma = '),num2str(gamma(i))];                % Define to use as legend
@@ -159,7 +178,7 @@ legend show                                       % Display the legend
 
 %                  Plot kinetic energy over time
 
-figure(4)                                         % Figure 4
+figure(5)                                         % Figure 5
 hold on                                           % Allows us to add trajectories to same plot
 for i = 1:11                                      % For each gamma/damping factor,
     txt = [sprintf('\\gamma = '),num2str(gamma(i))];                % Define to use as legend
@@ -196,10 +215,10 @@ function rdot = proj(t,r,g,L,gamma)
 end
 
 function [check,isterminal,direction] = thetazero(t,r,g,L,gamma)
-    direction = []; % Use default settings
-    isterminal = 1;
-    check = double(abs(r(1)) < 0.0001);  % If magnitude of angle is too small
-    % end the calculation
+    direction = []; % Use default settings (detect both increasing and decreasing theta)
+    isterminal = 1; % Stop integration once we reach equilibrium
+    check = double(abs(r(1)) < 0.0001);  % If magnitude of angle is very small
+    % End the calculation
 
     
 end

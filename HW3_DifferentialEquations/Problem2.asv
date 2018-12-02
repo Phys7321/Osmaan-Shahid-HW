@@ -1,4 +1,4 @@
-function [sol] = Problem2(varargin) 
+function [period,sol] = Problem2(varargin) 
 % Finds the period of a pendulum for large oscillations given the
 % length of the pendulum arm and initial conditions. All angles in radians.
 % Use the input "Problem2(L)" where
@@ -47,63 +47,12 @@ opts = odeset('refine',6);                                   % Options used in t
 % Solve diff. eq. for 5 different initial angles
 % Takes the form
 % [time, v] = ode45(function,t-axis,[initial_angle initial_speed],options,g,L)
-% where v = [angle(t), velocity(t)]
 
 for i = 1:5                              % For each initial angle, solve ODEs
     [sol(i).time , v] = ode45(@proj,tspan,[theta0(i) thetad0],opts,g,L);
     sol(i).angle = v(:,1);               % angles = first column of v
     sol(i).velocity = v(:,2);            % angular velocities = second column of v
 end
-
-
-
-
-
-%                        Create plot of angle vs. time
-
-colors = ['k' 'c' 'g' 'y' 'r'];                   % Make vector of colors for plot legend
-
-figure(1)                                         % Figure 1
-hold on                                           % Allows us to add trajectories to same plot
-for i = 1:5                                       % For each initial angle,
-    txt = [sprintf('\\theta_0 = '),num2str(theta0(i))];             % Define to use as legend
-    plot(sol(i).time,sol(i).angle,colors(i),'DisplayName',txt);     % Plot angle vs. time (DisplayName->Legend)
-    title(sprintf('Angle vs. Time'))              % Plot title
-    xlabel('t (s)')                               % Label x-axis
-    ylabel('\theta (rad)')                        % Label y-axis
-    ylim([-2 2])                                  % y-axis range
-end                                               % End for loop
-hold off                                          % Hold off
-legend show                                       % Display the legend
-
-% The plots show that the position of the pendulum is clearly sinusoidal in
-% nature, specifically that of a cosine function. The larger initial gives
-% a slightly longer period, but not by much (at least not too noticeable
-% over only a few periods).
-
-
-
-
-
-%                 Create plot of angular velocity vs. time
-
-figure(2)                                         % Figure 2
-hold on                                           % Allows us to add trajectories to same plot
-for i = 1:5                                       % For each initial angle,
-    txt = [sprintf('\\theta_0 = '),num2str(theta0(i))];                % Define to use as legend
-    plot(sol(i).time,sol(i).velocity,colors(i),'DisplayName',txt);     % Plot angle vs. time (DisplayName->Legend)
-    title(sprintf('Angular Velocity vs. Time'))   % Plot title
-    xlabel('t (s)')                               % Label x-axis
-    ylabel('\omega (rad/s)')                      % Label y-axis
-    ylim([-4 4])                                  % y-axis range
-end                                               % End for loop
-hold off                                          % Hold off
-legend show                                       % Display the legend
-
-% The plots show that the angular velocity of the pendulum is clearly 
-% sinusoidal in nature, specifically that of a negative sine function. This
-% makes sense since it is the derivative of the cosine function from the
-% position of the pendulum.
 
 
 
@@ -125,24 +74,6 @@ end
 
 
 
-%                      Plot period vs. maximum angle
-
-figure(3)                                    % Figure 3
-plot(ThetaMax,Period,'ok-')                  % Plot Period (T) vs. Max. Angle
-title('Period vs. \theta_{max}')             % Plot title 
-xlabel('\theta_{max}')                       % Label x-axis
-ylabel('T')                                  % Label y-axis
-ylim([1.5 2.5])
-
-% The graph shows an increase in period for larger initial angles. The
-% period increases slightly, but not by a lot. This makes sense, since the
-% small-angle approximation no longer applies for larger angles, therefore
-% the period is not independent of the amplitude.
-
-
-
-
-
 %                 Define a structure for energies
 
 % Fields are 'Kinetic Energy', 'Potential Energy', and 'Total Energy'
@@ -159,24 +90,57 @@ end
 
 
 
-%                  Plot total energy over time
 
-figure(4)                                         % Figure 4
+
+
+
+
+%                 Create plot of angular velocity vs. time
+
+figure(2)                                         % Figure 2
 hold on                                           % Allows us to add trajectories to same plot
 for i = 1:5                                       % For each initial angle,
     txt = [sprintf('\\theta_0 = '),num2str(theta0(i))];                % Define to use as legend
-    plot(sol(i).time,energy(i).Etot,colors(i),'DisplayName',txt);      % Plot angle vs. time (DisplayName->Legend)
-    title('Total Energy vs. Time')                % Plot title
+    plot(sol(i).time,sol(i).velocity,colors(i),'DisplayName',txt);     % Plot angle vs. time (DisplayName->Legend)
+    title(sprintf('Angular Velocity vs. Time'))   % Plot title
     xlabel('t (s)')                               % Label x-axis
-    ylabel('Total Energy (J)')                    % Label y-axis
+    ylabel('\omega (rad/s)')                      % Label y-axis
 end                                               % End for loop
 hold off                                          % Hold off
 legend show                                       % Display the legend
 
-% The energies are plotted, and do not drift from the initial value by much
-% at all. Therefore, the solution is stable.
 
 
+
+
+
+
+
+% Create plot of total energy vs. time
+
+colors = ['k' 'c' 'g' 'y' 'r'];    % Make vector of colors for plot legend
+
+figure(3)
+hold on
+for i = 1:5                                      % For each initial angle,
+    plot(sol(i).time,energy(i).Etot,colors(i))   % Plot(time,total_energy,color)
+end
+hold off
+
+legend('\theta_0=0.1','\theta_0=0.2','\theta_0=0.4','\theta_0=0.8','\theta_0=1.0')
+title('Total Energy')
+xlabel('t')
+ylabel('Energy')
+
+
+% Plot period .vs maximum angle
+figure(4)
+plot(ThetaMax,Period,'k-')
+title('Period vs. \theta_{max}')
+xlabel('\theta_{max}')
+ylabel('T')
+
+% Period should increase for larger angles
 
 
 
@@ -185,10 +149,10 @@ end
 
 
 
-% t = x-axis
-% r = column vector: [theta; theta_velocity]
-% g = 9.8
-% L = length of pendulum
+%t = x-axis
+%r = column vector: [theta; theta_velocity]
+%g = 9.8
+%L = length of pendulum
 function rdot = proj(t,r,g,L)
     rdot = [r(2); -g/L*sin(r(1))];
 end
