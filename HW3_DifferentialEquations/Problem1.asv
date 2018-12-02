@@ -24,22 +24,22 @@ switch nargin
        thetad0 = varargin{3};
 end
 
-g=9.81;                                              % Acceleration due to gravity
-omega = sqrt(g/L);                                   % Natural angular frequency
-T= 2*pi/omega;                                       % Period of simple harmonic oscillator
-N = 1;                                               % Number of oscillations to graph
-m = 1;                                               % Mass of pendulum bob
+g=9.81;                             % Acceleration due to gravity
+omega = sqrt(g/L);                  % Natural angular frequency
+T= 2*pi/omega;                      % Period of simple harmonic oscillator
+N = 1;                              % Number of oscillations to graph
+m = 1;                                      % Mass of pendulum bob
 
 
 tspan = [0 N*T];                                     % Integration time goes from 0 to N*T
-opts = odeset('refine',6);                           % Options
+opts = odeset('refine',6);
 
 r0 = [theta0 thetad0];                               % [initial_angle initial_angle_velocity]
-[t,w] = ode45(@proj,tspan,r0,opts,g,L);              % Solve differential equation
+[t,w] = ode45(@proj,tspan,r0,opts,g,L);
 sol = [t,w];                                         % t is x-axis, w is y-axis
 ind= find(w(:,2).*circshift(w(:,2), [-1 0]) <= 0);
 ind = chop(ind,4);
-period= 2*mean(diff(t(ind)));                        % Find period
+period= 2*mean(diff(t(ind)));
 
 % Define energies
 K = m*(L^2)*(w(:,2).^2)/2;   % Kinetic energy
@@ -53,15 +53,15 @@ Uavg = linspace(mean(U),mean(U),length(t));           % Average potential energy
 
 % Create plots
 
-figure(1)                              
-subplot(2,1,1)                                     % Plot Angle and Velocity vs. time
-plot(t,w(:,1),'k-',t,w(:,2),'b--') 
+figure(1)
+subplot(2,1,1)
+plot(t,w(:,1),'k-',t,w(:,2),'b--')
 legend('Angle','Angular Velocity')
-title('Angle and Angular Velocity vs. Time')
-xlabel('t (s)')
-ylabel('\theta (rad)')
+title('Angle and Angular Velocity')
+xlabel('t')
+ylabel('\theta')
 
-subplot(2,1,2)                                     % Plot Energies vs. Time
+subplot(2,1,2)
 plot(t,K,'k-',t,U,'c-',t,Kavg,'r--',t,Uavg,'g--')
 legend('Kinetic','Potential','Average Kinetic','Average Potential')
 title('Kinetic and Potential Energy')
@@ -70,7 +70,7 @@ ylabel('Energy')
 ylim([-0.5 E0+E0/2])
 
 figure(2)
-subplot(2,1,1)                                     % Plot Energy and Energy Change vs. time
+subplot(2,1,1)
 plot(t,E,'k-',t,deltaE,'b--')
 legend('Total E','Change in E')
 title('Total Energy')
@@ -78,24 +78,13 @@ xlabel('t')
 ylabel('Energy')
 ylim([-0.5 E0+E0/2])
 
-subplot(2,1,2)                                     % Plot Velocity vs. Angle
+subplot(2,1,2)
 plot(w(:,1),w(:,2),'k-')
 title('Phase Space')
 xlabel('\theta')
-ylabel('\omega')
+ylabel('\theta dot')
 xlim([-5 5])
 ylim([-5 5])
-
-% In phase space, the contours are going in the clockwise direction. I know
-% this because at time t = 0, the angle is 1 and the angular velocity will
-% be decreasing (which can be seen in Figure 1). Therefore, the path is
-% clockwise.
-
-
-
-
-
-
 end
 %-------------------------------------------
 

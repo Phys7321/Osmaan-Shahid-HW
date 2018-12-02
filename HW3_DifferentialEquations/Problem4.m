@@ -1,4 +1,4 @@
-function [period,sol] = Problem4(varargin) 
+function [sol] = Problem4(varargin) 
 % Finds the period of a damped pendulum for large oscillations given the
 % length of the pendulum arm and initial conditions. All angles in radians.
 % Use the input "Problem4(L)" where
