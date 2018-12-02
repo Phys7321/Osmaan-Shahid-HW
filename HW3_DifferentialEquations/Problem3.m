@@ -1,4 +1,4 @@
-function [period,sol] = Problem3(varargin) 
+function [sol] = Problem3(varargin) 
 % Finds the period of a damped pendulum for large oscillations given the
 % length of the pendulum arm and initial conditions. All angles in radians.
 % Use the input "Problem3(L)" where
@@ -82,18 +82,12 @@ end                                               % End for loop
 hold off                                          % Hold off
 legend show                                       % Display the legend
 
-
-
-
-
-%                 Create plot of Equilibrium Time vs. gamma
-
-figure(2)                                         % Figure 2
-plot(gamma,equilibrium,'-ok');                    % Plot Equil. Time vs. gamma/damping factor
-title(sprintf('Equilibrium Time vs. \\gamma'))    % Plot title
-xlabel(sprintf('\\gamma'))                        % Label x-axis
-ylabel('Equilibrium Time (s)')                    % Label y-axis
-xlim([min(gamma) max(gamma)])                     % x-axis spans all gamma values
+% The plot shows the motion of a pendulum with no damping, and then the
+% motion of a pendulum as we slowly change the damping factor. For no
+% damping, the motion is purely sinusoidal. For non-zero damping, the
+% solution is sinusoidal with an envelope that decays exponentially, up
+% until gamma is about 4 or so. After that, it's mostly just an exponential
+% decay.
 
 
 
@@ -113,13 +107,18 @@ Frequency = 1./Period;                              % Define frequency as f = 1/
 
 
 %           Plot Period and Frequency vs. gamma (damping factor)
-figure(3)                                             % Figure 3
+figure(2)                                             % Figure 2
 plot(gamma,Period,'ok-',gamma,Frequency,'ob-');       % Plot Period and Frequency vs. gamma
 legend('Period','Frequency')                          % Plot legend
 title(sprintf('Period and Frequency vs. \\gamma'))    % Plot title
 xlabel(sprintf('\\gamma'))                            % Label x-axis
 ylabel('Period/Frequency')                            % Label y-axis
 ylim([0 4])                                           % y-axis range
+
+% The period is almost constant for low gamma (gamma < 2) but then
+% increases after that. After gamma ? 4, the period increases and the
+% frequency decreases. Eventually, the period goes to infinity since the
+% motion is no longer sinusoidal.
 
 
 
@@ -142,25 +141,112 @@ end
 
 
 %                   Find average energies per cycle
-% Define avg energy structure
-% Fields are 'Average Kinetic Energy', 'Average Potential Energy',
-% and 'Average Total Energy'
-avg_energy = struct('Kavg',empty,'Uavg',empty,'Eavg',empty);
+
+% Define average energy structure
+% Fields are 'Average Kinetic Energy', 'Average Potential Energy', 
+% 'Average Total Energy', and 'Cycles'
+avg_energy = struct('Kavg',empty,'Uavg',empty,'Eavg',empty,'Cycles',empty);
 
 % Fill in structures
-for i = 1:11                                               % For each gamma,
-    ind = find(sol(i).angle.*circshift(sol(i).angle, [-1 0]) <= 0); % Find each cycle
-    avg_energy(i).Kavg = mean(energy(i).KE(ind));          % Average KE
-    avg_energy(i).Uavg = mean(energy(i).U(ind));           % Average U
-    avg_energy(i).Eavg = mean(energy(i).Etot(ind));        % Average Etot
+for i = 1:11                                                     % For each gamma,
+    ind = find(sol(i).angle.*circshift(sol(i).angle, [-1 0]) <= 0); % Find every turning point in trajectory
+    for j = 1:(length(ind)-1)                                    % For each cycle in trajectory,
+        t1 = ind(j);                                             % First point of cycle
+        t2 = ind(j+1);                                           % Second point of cycle
+        avg_energy(i).Kavg(j) = mean(energy(i).KE(t1:t2));       % Average KE during cycle
+        avg_energy(i).Uavg(j) = mean(energy(i).U(t1:t2));        % Average U during cycle
+        avg_energy(i).Eavg(j) = mean(energy(i).Etot(t1:t2));     % Average Etot during cycle
+    end
+    avg_energy(i).Cycles = linspace(1,length(ind)-1,length(ind)-1);  % Number of cycles in trajectory
 end
 
 
 
 
 
-%                  Plot phase space (angle, velocity)
+%                  Plot average total energy over time
+
+figure(3)                                         % Figure 3
+hold on                                           % Allows us to add trajectories to same plot
+for i = 1:11                                      % For each gamma/damping factor,
+    txt = [sprintf('\\gamma = '),num2str(gamma(i))];                             % Define to use as legend
+    plot(avg_energy(i).Cycles,avg_energy(i).Eavg,colors(i),'DisplayName',txt);   % Plot energy vs. time (DisplayName->Legend)
+    title('Average Total Energy vs. Time')        % Plot title
+    xlabel('Number of Cycles')                    % Label x-axis
+    ylabel('Average Total Energy (J)')            % Label y-axis
+end                                               % End for loop
+hold off                                          % Hold off
+legend show                                       % Display the legend
+
+% For gamma = 0, the average total energy is constant. As gamma increases,
+% the average total energy decreases in a non-linear behavior, likely an
+% exponential decay.
+
+
+
+
+
+%                  Plot average kinetic energy over time
+
 figure(4)                                         % Figure 4
+hold on                                           % Allows us to add trajectories to same plot
+for i = 1:11                                      % For each gamma/damping factor,
+    txt = [sprintf('\\gamma = '),num2str(gamma(i))];                             % Define to use as legend
+    plot(avg_energy(i).Cycles,avg_energy(i).Kavg,colors(i),'DisplayName',txt);   % Plot energy vs. time (DisplayName->Legend)
+    title('Average Kinetic Energy vs. Time')      % Plot title
+    xlabel('Number of Cycles')                    % Label x-axis
+    ylabel('Average Kinetic Energy (J)')          % Label y-axis
+end                                               % End for loop
+hold off                                          % Hold off
+legend show                                       % Display the legend
+
+% For gamma = 0, the average kinetic energy is constant. As gamma increases,
+% the average kinetic energy decreases in a non-linear behavior, likely an
+% exponential decay. This has the same behavior as the average total and
+% average potential energy graphs.
+
+
+
+
+
+%                  Plot average potential energy over time
+
+figure(5)                                         % Figure 5
+hold on                                           % Allows us to add trajectories to same plot
+for i = 1:11                                      % For each gamma/damping factor,
+    txt = [sprintf('\\gamma = '),num2str(gamma(i))];                             % Define to use as legend
+    plot(avg_energy(i).Cycles,avg_energy(i).Uavg,colors(i),'DisplayName',txt);   % Plot energy vs. time (DisplayName->Legend)
+    title('Average Potential Energy vs. Time')    % Plot title
+    xlabel('Number of Cycles')                    % Label x-axis
+    ylabel('Average Potential Energy (J)')        % Label y-axis
+end                                               % End for loop
+hold off                                          % Hold off
+legend show                                       % Display the legend
+
+% For gamma = 0, the average potential energy is constant. As gamma increases,
+% the average potential energy decreases in a non-linear behavior, likely an
+% exponential decay. This has the same behavior as the average total and
+% average kinetic energy graphs.
+
+
+
+
+
+%                 Create plot of Equilibrium Time vs. gamma
+
+figure(6)                                         % Figure 6
+plot(gamma,equilibrium,'-ok');                    % Plot Equil. Time vs. gamma/damping factor
+title(sprintf('Equilibrium Time vs. \\gamma'))    % Plot title
+xlabel(sprintf('\\gamma'))                        % Label x-axis
+ylabel('Equilibrium Time (s)')                    % Label y-axis
+xlim([min(gamma) max(gamma)])                     % x-axis spans all gamma values
+
+
+
+
+
+%                  Plot phase space (angle, velocity)
+figure(7)                                         % Figure 7
 hold on                                           % Allows us to add trajectories to same plot
 for i = [2 4 6 8 10]                              % For certain gammas (defined in HW)
     txt = [sprintf('\\gamma = '),num2str(gamma(i))];                % Define to use as legend
@@ -172,31 +258,10 @@ end                                               % End for loop
 hold off                                          % Hold off
 legend show                                       % Display the legend
 
-
-
-
-
-%                  Plot kinetic energy over time
-
-figure(5)                                         % Figure 5
-hold on                                           % Allows us to add trajectories to same plot
-for i = 1:11                                      % For each gamma/damping factor,
-    txt = [sprintf('\\gamma = '),num2str(gamma(i))];                % Define to use as legend
-    plot(sol(i).time,energy(i).KE,colors(i),'DisplayName',txt);     % Plot angle vs. time (DisplayName->Legend)
-    title('Kinetic Energy vs. Time')              % Plot title
-    xlabel('t (s)')                               % Label x-axis
-    ylabel('Kinetic Energy (J)')                  % Label y-axis
-end                                               % End for loop
-hold off                                          % Hold off
-legend show                                       % Display the legend
-
-
-
-
-
-
-
-
+% The phase space paths each depend on gamma. For gamma = 0, the path is an
+% ellipse, orbiting around the center. As gamma increases, the path spirals
+% towards the center, and for higher values of gamma, the path almost falls
+% in towards the center.
 
 
 
