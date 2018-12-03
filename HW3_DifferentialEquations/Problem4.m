@@ -42,7 +42,7 @@ omega = [0 1 2 2.2 2.4 2.6 2.8 3.0 3.2 3.4 4] ;   % Driving force frequencies
 
 empty = {[],[],[],[],[],[],[],[],[],[],[]};                   % 11 sets, one for each gamma
 sol1 = struct('time',empty,'velocity',empty,'angle',empty);   % Solution structure for gamma1 = 0.5
-sol1 = struct('time',empty,'velocity',empty,'angle',empty);   % Solution structure for gamma2 = 1.5
+sol2 = struct('time',empty,'velocity',empty,'angle',empty);   % Solution structure for gamma2 = 1.5
 
 tspan = [0 N*T0];                                             % Integration time goes from 0 to N*T0
 opts = odeset('refine',6);                                    % Set up options
@@ -52,14 +52,16 @@ opts = odeset('refine',6);                                    % Set up options
 % [time, v] = ode45(function,t-axis,[initial_angle initial_speed],options,g,L,gamma)
 % where v = [angle(t), velocity(t)] and 'equil' is time that pendulum reaches equilibrium
 
-% Solve the ODE for omega = 2, first type of initial conditions
-theta0 = 1.0 ;                                                % Initial angle
-thetad0 = 0.0 ;                                               % Initial angular velocity
+% Solve the ODE for omega = 2, one type of initial conditions
+theta0 = 0 ;                                                % Initial angle
+thetad0 = 1 ;                                               % Initial angular velocity
 r0 = [theta0 thetad0];                                        % Initial conditions
-% sol(3) corresponds to the solution when omega = 2 (see definition of omega above)
-[sol(3).time, v] = ode45(@proj,tspan,r0,opts,g,L,gamma1,A,omega(3));
-sol(3).angle = v(:,1);                                        % angles = first column of v
-sol(3).velocity = v(:,2);                                     % angular velocities = second column of v
+
+% sol1(3) corresponds to the solution when gamma = gamma1 and omega = 2 (see definition of omega above)
+
+[sol1(3).time, v] = ode45(@proj,tspan,r0,opts,g,L,gamma1,A,omega(3));
+sol1(3).angle = v(:,1);                                        % angles = first column of v
+sol1(3).velocity = v(:,2);                                     % angular velocities = second column of v
 
 
 
@@ -68,10 +70,41 @@ sol(3).velocity = v(:,2);                                     % angular velociti
 %                Create plot of angle vs. time for omega = 2
 
 figure(1)                                                         % Figure 1
-plot(sol(3).time,sol(3).angle);                                   % Plot angle vs. time
+plot(sol1(3).time,sol1(3).angle);                                   % Plot angle vs. time
 title(sprintf('Angle vs. Time for \\omega = 2, \\theta_0 = 1 '))  % Plot title
 xlabel('t (s)')                                                   % Label x-axis
 ylabel('\theta (rad)')                                            % Label y-axis
+
+
+
+
+
+% Find the period as a function of number of cycle for gamma1 = 0.5 and omega = 2
+ind = find(sol1(3).angle.*circshift(sol1(3).angle, [-1 0]) <= 0); % Find every turning point in trajectory
+Period = zeros(1,length(ind)-1);                                  % Preallocate for speed
+for i = 1:(length(ind)-1)                                       % For each cycle in trajectory,
+    t1 = ind(i);                                                % First point of cycle
+    t2 = ind(i+1);                                              % Second point of cycle
+    Period(i) = sol1(3).time(t2) - sol1(3).time(t1);            % Period = Time between turning points
+end
+
+Cycles = linspace(1,length(ind)-1,length(ind)-1);               % Number of cycles in trajectory
+    
+AngFreq = 2*pi./Period;                                         % Angular frequency = 2*pi/T
+
+
+
+
+
+%      Plot period and angular frequency per cycle for gamma1 = 0.5 and omega = 2
+
+figure(2)                                         % Figure 2
+plot(Cycles,Period,'-k',Cycles,AngFreq,'-b');     % Plot energy vs. time (DisplayName->Legend)
+title(sprintf('Period and Angular Freq. vs. Cycle Number for \\gamma = 0.5 and \\omega = 2'))  % Plot title
+legend('Period','Angular Frequency');             % Plot legend
+xlabel('Number of Cycles')                        % Label x-axis
+ylabel('Period (s) / Angular Frequency (rad/s)')  % Label y-axis
+
 
 
 
