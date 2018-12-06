@@ -13,3 +13,5 @@ And I'm mostly happy with HW1, I'm assuming that you know how to run your python
 
 10.22
 I've only begun to look at your field for HW3, but I already can tell - you need to thing more about functions!!! Your code is way too long - you repeat code lines too often. If you find yourself repeating code lines, that is when you should think about putting that process in a function (or in the case of many of your repeated lines - **a for loop**)
+12.6
+I've looked at HW5 - The first problem looks good, I would just want to put labels on your plots, but that's about it. I didn't see the other two problems?
