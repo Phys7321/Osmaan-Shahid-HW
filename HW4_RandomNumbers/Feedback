@@ -1,2 +1,5 @@
 11.17 
 It looks like you're less than half done here. I think that you should look into measuring the equilibration time in number of steps. While it's a good though to use actually processing time - that's not exactly what is meant with equilibration time here. 
+12.10
+I think you might have done a little work on the second part. You got the rough relation between delta and equilibriation time. But it appears that you only ran one test in problem 1
+
