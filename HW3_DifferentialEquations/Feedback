@@ -15,3 +15,5 @@ Problem 3: Looks good
 Problem 4: I can see that you did a lot of work with the structures in this. Hopefully that was a fruitful exercise. Still missing the delta graphs though, and I get an error half way through because t3 is not defined.
 Problem 5: I getting some errors about concatenation. Apparently, it doesn't like what you are doing with the ode solver in line 40
 Problem 7: Not finished.
+
+Challenge Problems: It appears that you made progess with the 2nd challenge problem, but I'm having problems running #4, it seems like it stuck in inf loop OR is taking forever.
